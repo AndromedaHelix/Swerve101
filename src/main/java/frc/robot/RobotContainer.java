@@ -4,17 +4,27 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.Manejo;
+import frc.robot.subsystems.Chasis;
+import frc.robot.commands.Autonomo;
 
 public class RobotContainer {
+  private static final Chasis chasis = new Chasis();
+  private static final XboxController driveControl = new XboxController(0);
+
   public RobotContainer() {
+
+    chasis.setDefaultCommand(new Manejo(chasis, () -> driveControl.getLeftX(), 
+                                  () -> driveControl.getLeftY(), () -> driveControl.getRightX()));
+  
     configureBindings();
   }
 
   private void configureBindings() {}
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return new Autonomo(chasis);
   }
 }
