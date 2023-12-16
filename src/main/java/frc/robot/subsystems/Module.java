@@ -8,7 +8,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.Constants;
 
 /**
  * Clase que representa un módulo de swerve. Cada módulo tiene un motor de giro
@@ -76,6 +78,10 @@ public class Module {
         turnPID = new PIDController(kP, kI, kD);
     }
 
+    public SwerveModulePosition getPosition(){
+      return new SwerveModulePosition(getDrivePosition(), getAngle());
+    }    
+
     public void setDesiredState(SwerveModuleState desiredState) {
         desiredState = SwerveModuleState.optimize(desiredState, getAngle());
 
@@ -109,5 +115,16 @@ public class Module {
         value = turnMotorNeo.getEncoder().getPosition();
         value = turnEncoder.getAbsolutePosition().getValueAsDouble();
         return Rotation2d.fromDegrees(value);
+    }
+
+    public double getDrivePosition(){
+        double position;
+
+        position = driveMotorFalcon.getPosition().getValue();
+        position = driveMotorNeo.getEncoder().getPosition();
+
+        position *= Constants.driveRevsToMeters;
+        
+        return position;
     }
 }
