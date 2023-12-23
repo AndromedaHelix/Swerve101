@@ -77,6 +77,19 @@ public class Chasis extends SubsystemBase{
         return gyro.getAngle();
     }
 
+    public ChassisSpeeds getChassisSpeeds(){
+        SwerveModuleState[] moduleStates = new SwerveModuleState[4];
+        moduleStates[0] = frenteIzq.getSwerveState();
+        moduleStates[1] = frenteDer.getSwerveState();
+        moduleStates[2] = atrasIzq.getSwerveState();
+        moduleStates[3] = atrasDer.getSwerveState();
+        return kinematics.toChassisSpeeds(moduleStates);
+    }
+
+    public ChassisSpeeds getFieldOrienteSpeeds(){
+        return ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(), getRotation2d());
+    }
+
     public Rotation2d getRotation2d(){
         return new Rotation2d(getAngle());
     }
