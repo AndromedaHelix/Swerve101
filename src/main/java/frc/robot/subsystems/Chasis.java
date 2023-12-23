@@ -2,14 +2,20 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -27,16 +33,19 @@ public class Chasis extends SubsystemBase{
 
     SwerveDriveKinematics kinematics = new SwerveDriveKinematics(fITranslation,fDTranslation, aITranslation, aDTranslation);
 
-     SwerveModulePosition[] positions = {frenteIzq.getPosition(), frenteDer.getPosition(), 
+    SwerveModulePosition[] positions = {frenteIzq.getPosition(), frenteDer.getPosition(), 
         atrasIzq.getPosition(), atrasDer.getPosition()};
 
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, getRotation2d(), positions, new Pose2d(0, 0, getRotation2d()));
+    
+    SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, getRotation2d(), positions, new Pose2d(0, 0, getRotation2d()));
 
     public Chasis(){
         frenteDer = new Module(0, 0, 0, Constants.modulekP, 0, 0);
         frenteIzq = new Module(0, 0, 0, Constants.modulekP, 0, 0);
         atrasDer = new Module(0, 0, 0, Constants.modulekP, 0, 0);
         atrasIzq = new Module(0, 0, 0, Constants.modulekP, 0, 0);
+    
         
     }
 
@@ -73,11 +82,31 @@ public class Chasis extends SubsystemBase{
     }
 
     public Pose2d getPose2d(){
-        return odometry.getPoseMeters();
+        return poseEstimator.getEstimatedPosition();
+        //return odometry.getPoseMeters();
+    }
+
+    public void setOdoPose(Pose2d pose){
+        positions[0] = frenteIzq.getPosition();
+        positions[1] = frenteDer.getPosition();
+        positions[2] = atrasIzq.getPosition();
+        positions[3] = atrasDer.getPosition();
+
+        odometry.resetPosition(getRotation2d(), positions, pose);
     }
 
     @Override
     public void periodic(){
+
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+
+        double found = table.getEntry("tv").getDouble(0);
+
+        double[] poseNums = new double[6];
+        poseNums = table.getEntry("botpose_wpiblue").getDoubleArray(poseNums);
+
+        Pose2d visionMeasurement = new Pose2d(poseNums[0], poseNums[1], getRotation2d());
+
         SmartDashboard.putNumber("gyro angle",getAngle());
         SmartDashboard.putNumber("pose x", getPose2d().getX());
 
@@ -86,6 +115,12 @@ public class Chasis extends SubsystemBase{
         positions[2] = atrasIzq.getPosition();
         positions[3] = atrasDer.getPosition();
         odometry.update(getRotation2d(), positions);
+
+        poseEstimator.update(getRotation2d(), positions);
+
+        if(found == 1){
+            poseEstimator.addVisionMeasurement(visionMeasurement, Timer.getFPGATimestamp(), null);
+        }
     }
 
 
