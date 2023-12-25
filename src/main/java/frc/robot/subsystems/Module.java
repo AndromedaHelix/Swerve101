@@ -51,6 +51,7 @@ public class Module {
         driveMotorNeo = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         turnMotorNeo = new CANSparkMax(turnMotorID, MotorType.kBrushless);
 
+        
         // Se reinician los motores a su configuración de fábrica. Esto es una buena
         // práctica siempre que inicialicemos un motor
         //
@@ -117,9 +118,18 @@ public class Module {
         return Rotation2d.fromDegrees(value);
     }
 
+    public SwerveModuleState getSwerveState(){
+        return new SwerveModuleState(getDriveVelocity(), getAngle());
+     }
+
+    public double getDriveVelocity(){
+        return driveMotorFalcon.getVelocity().getValue() * Constants.driveRPS2MPS;
+    }
+
     public double getDrivePosition(){
         double position;
 
+        
         position = driveMotorFalcon.getPosition().getValue();
         position = driveMotorNeo.getEncoder().getPosition();
 
