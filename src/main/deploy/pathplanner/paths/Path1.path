@@ -1,0 +1,115 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.6183413061270566,
+        "y": 4.9507803460051365
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.6183413061270575,
+        "y": 4.4507803460051365
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.864106420921175,
+        "y": 4.5847023343352244
+      },
+      "prevControl": {
+        "x": 5.524526483080743,
+        "y": 6.234575863248948
+      },
+      "nextControl": {
+        "x": 7.37387962446562,
+        "y": 3.9568478177668274
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.6183413061270566,
+        "y": 4.334774212951204
+      },
+      "prevControl": {
+        "x": 3.196135796785481,
+        "y": 4.405577516016144
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "RecogerPieza",
+      "waypointRelativePos": 1.05,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "toggleIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "runIntake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "toggleIntake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": []
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 2.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
